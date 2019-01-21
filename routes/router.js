@@ -1,32 +1,32 @@
 var express = require('express');
 var User = require('../models/user');
-var EmailValidator = require("email-validator");
-var passwordValidator = require('password-validator');
 var Validators = require('../utils/validator');
-
 var router = express.Router();
+
 // Email and Password Validator functions
 var emailValidator = Validators.emailValidator;
 var passwordValidator = Validators.passwordValidator;
-// Login
-router.post('/add', (req, res, next) => {
+
+// Signup
+router.post('/signup', (req, res, next) => {
 
   const { username, email, password, confirm_password, admin } = req.body;
 
   if (email && username && password && confirm_password && admin ) {
    
   	if (!emailValidator.validate(email)) {
-  	  var err = new Error('Please enter a valid email.');
+
       return res.status(400).send({ succes: false, message: 'Please enter a valid email.' });
-      return next(err);
+      return next();
   	}
   	if (passwordValidator.validate(password)) {
+
   	  if (password !== confirm_password) {
-  	    var err = new Error('Passwords do not match.');
         return res.status(400).send({ succes: false, message: 'Passwords do not match.' });
-        return next(err);
+        return next();
        }
   	}else {
+
   	  return res.status(400).send({ 
   	  	succes: false,
   	  	message: `Password must contain at least 1 lowercase
@@ -41,7 +41,9 @@ router.post('/add', (req, res, next) => {
       confirm_password,
       admin,
     }
+
     const newUser = new User(userData);
+
     newUser.save(function(err, user) {
       if (err) {
         if (err.name === 'MongoError' && err.code === 11000) {
@@ -77,6 +79,7 @@ router.post('/login', (req, res, next) => {
         return next(err);
       } else {
         req.session.userId = user._id;
+        //If the user is a admin implies user.admin == true, then find all the normal users
         if (user.admin) {
           User.find({admin: false})
         	.then(users => res.json([user, ...users]))

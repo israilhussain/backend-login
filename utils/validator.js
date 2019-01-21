@@ -1,4 +1,7 @@
+//Email validator
 var emailValidator = require("email-validator");
+
+//Password validator
 var PasswordValidator = require('password-validator');
 var passwordValidator = new PasswordValidator();
 passwordValidator
