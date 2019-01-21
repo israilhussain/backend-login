@@ -6,3 +6,4 @@ npm start
 Test the application using Postman. 
 Urls for signup: http://localhost:8000/api/signup
 Urls for login: http://localhost:8000/api/login
+
